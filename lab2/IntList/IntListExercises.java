@@ -10,14 +10,14 @@ public class IntListExercises {
      */
     public static void addConstant(IntList lst, int c) {
         IntList head = lst;
-         do{
-            head.first += c;
-            head = head.rest;
-        }while (head != null);
+         while(head != null){
+             head.first += c;
+             head = head.rest;
+         }
     }
 
     /**
-     * Part B: Buggy method that sets node.first to zero if
+     * Part B: Buggy method that sets node. First to zero if
      * the max value in the list starting at node has the same
      * first and last digit, for every node in L
      *
@@ -65,18 +65,21 @@ public class IntListExercises {
      * @param lst IntList from Lecture
      * @return True if there was an update to the list
      */
-    public static boolean squarePrimes(IntList lst) {
+    static boolean squarePrimes(IntList lst) {
         // Base Case: we have reached the end of the list
         if (lst == null) {
             return false;
         }
+        boolean mcurrElemIsPrime = false;
+        while(lst.rest != null) {
+             boolean currElemIsPrime = Primes.isPrime(lst.first);
 
-        boolean currElemIsPrime = Primes.isPrime(lst.first);
-
-        if (currElemIsPrime) {
-            lst.first *= lst.first;
+            if (currElemIsPrime) {
+                lst.first *= lst.first;
+                mcurrElemIsPrime = currElemIsPrime;
+            }
+            lst = lst.rest;
         }
-
-        return currElemIsPrime || squarePrimes(lst.rest);
+        return mcurrElemIsPrime || squarePrimes(lst.rest);
     }
 }
