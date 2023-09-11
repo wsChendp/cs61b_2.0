@@ -25,7 +25,7 @@ public class TimeAList {
         AList<Double> times = new AList<>();
         AList<Integer> opCounts = new AList<>();
         int testAListLength = 1000;
-        for (int p = 0; p < 15; p++) {
+        for (int p = 0; p < 8; p++) {
             if (p > 0) {
                 testAListLength *= 2;
             }
