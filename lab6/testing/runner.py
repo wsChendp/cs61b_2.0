@@ -12,7 +12,7 @@ SHORT_USAGE = """\
 Usage: python3 runner.py OPTIONS TEST.in ...
    OPTIONS may include
        --keep         Keep test directories
-       --lib=DIR   Relative path to directory containing CS61BL libraries
+       --lib=DIR      Relative path to directory containing CS61BL libraries
        --timeout=SEC  Default number of seconds allowed to each execution
                       of capers.
        --src=SRC      Use SRC instead of "src" as the subdirectory containing

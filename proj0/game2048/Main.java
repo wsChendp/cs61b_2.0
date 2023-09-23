@@ -15,7 +15,8 @@ public class Main {
     static final double TILE2_PROBABILITY = 0.9;
 
     /** The main program.  ARGS may contain the options --seed=NUM,
-     *  (random seed); --log (record moves and random tiles
+     *  (random seed);
+     *  --log (record moves and random tiles
      *  selected.). */
     public static void main(String... args) {
         CommandArgs options =

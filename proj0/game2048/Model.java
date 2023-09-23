@@ -1,13 +1,16 @@
 package game2048;
 
-import java.util.Formatter;
-import java.util.Observable;
+import java.util.*;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author : cdpp 2023/09/22
+ *  TODO: YOUR NAME HERE
  */
 public class Model extends Observable {
+    /*向所有观察者发出自己变化的通知，观察者通过observer接口接收通知、并执行相应的操作
+    优势挺大的：低耦合，不用互相依赖来实现自己
+     */
     /** Current contents of the board. */
     private Board board;
     /** Current score. */
@@ -106,7 +109,10 @@ public class Model extends Observable {
      *    value, then the leading two tiles in the direction of motion merge,
      *    and the trailing tile does not.
      * */
-    public boolean tilt(Side side) {
+    // 1、相同运动方向相同数值方块叠加
+    // 2、一块方块只能在一次运动中合并一次
+    // 3、当三个相同数值的方块向同方向运动时，合并运动方向上的方块！
+    public boolean tilt(Side side){
         boolean changed;
         changed = false;
 
@@ -114,12 +120,55 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        board.setViewingPerspective(side);
+        for (int col = 0; col < board.size(); col++){
+            for(int row = board.size() - 1; row >= 0;row--){
+                Tile t1 = board.tile(row,col);
+                if(t1 != null){
+                    for(int row2 = row - 1; row2 >= 0; row2--){
+                        Tile t2 = board.tile(row2,col);
+                        if(t2 != null) {
+                            if(t2.value() == t1.value()) {
+                                score += t1.value() * 2;
+                                board.move(row2, col, t2);
+                                changed = true;
+                                row = row2;
+                                break;
+                            }else break;
+                        }
+                    }
+                }
+
+            }
+        }
+
+        for(int col = 0; col < board.size(); col++){
+            for(int row = board.size() - 1; row >= 0; row--){
+                Tile t1 = board.tile(row,col);
+                if(t1 == null){
+                    for(int row2 = row - 1; row2 >= 0; row2--){
+                        Tile t2 = board.tile(row2,col);
+                        if(t2 == null){
+                            board.move(row,col,t2);
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
     }
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -138,6 +187,9 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for(Tile tile : b){
+            if(tile == null) return true;
+        }
         return false;
     }
 
@@ -148,6 +200,9 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for (Tile t : b){
+            if(t != null && t.value() == MAX_PIECE) return true;
+        }
         return false;
     }
 
@@ -159,6 +214,22 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        return emptySpaceExists(b) || mergeMoveExitsts(b);
+    }
+    public static boolean mergeMoveExitsts(Board b){
+        int[][] neighbors = {{-1,0},{1,0},{0,-1},{0,1}};
+        int len = b.size();
+        for (Tile t : b){
+            int c = t.col();
+            int r = t.row();
+            for(int i = 0; i < 4; i++){
+                int nc = c + neighbors[i][0];
+                int nr = r + neighbors[i][1];
+                if((0 <= nc && nc < len) && (0 <= nr && nr < len) && (b.tile(nc,nr).value() == t.value())){
+                        return true;
+                }
+            }
+        }
         return false;
     }
 
